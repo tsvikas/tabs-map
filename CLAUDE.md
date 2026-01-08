@@ -47,9 +47,8 @@ Since Firefox runs on Windows while dev server is in WSL:
 4. Select `manifest.json`
 
 ### After Code Changes
-- Go to `about:debugging#/runtime/this-firefox`
-- Find "Tabs Map" in the extensions list
-- Click **"Reload"** button
+- Hot reload works automatically in dev mode
+- If needed, manually reload: go to `about:debugging#/runtime/this-firefox` and click **"Reload"** button
 
 ### To View Console/Debug
 - Go to `about:debugging#/runtime/this-firefox`
