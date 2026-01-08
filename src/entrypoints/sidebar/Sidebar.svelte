@@ -1,11 +1,22 @@
 <script lang="ts">
   let tabCount = $state(0);
+  // Track which tab IDs we're counting (to avoid counting hidden tabs)
+  let trackedTabIds = new Set<number>();
 
   async function syncTabCount() {
     try {
       const tabs = await browser.tabs.query({});
       // Filter out hidden Firefox tabs
       const visibleTabs = tabs.filter(tab => !tab.hidden);
+
+      // Update tracked IDs
+      trackedTabIds.clear();
+      visibleTabs.forEach(tab => {
+        if (tab.id !== undefined) {
+          trackedTabIds.add(tab.id);
+        }
+      });
+
       tabCount = visibleTabs.length;
     } catch (err) {
       console.error('Failed to load tabs:', err);
@@ -18,14 +29,18 @@
 
     // Listen for tab events
     const onCreated = (tab: browser.tabs.Tab) => {
-      if (!tab.hidden) {
+      if (!tab.hidden && tab.id !== undefined) {
+        trackedTabIds.add(tab.id);
         tabCount++;
       }
     };
 
-    const onRemoved = () => {
-      // Decrement immediately, don't wait for query
-      tabCount--;
+    const onRemoved = (tabId: number) => {
+      // Only decrement if we were counting this tab
+      if (trackedTabIds.has(tabId)) {
+        trackedTabIds.delete(tabId);
+        tabCount--;
+      }
     };
 
     browser.tabs.onCreated.addListener(onCreated);
