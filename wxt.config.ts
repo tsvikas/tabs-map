@@ -23,7 +23,7 @@ export default defineConfig({
       },
     },
   },
-  runner: {
+  webExt: {
     startUrls: ['https://example.com'],
   },
 });

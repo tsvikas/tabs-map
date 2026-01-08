@@ -1,14 +1,41 @@
 <script lang="ts">
   let tabCount = $state(0);
 
-  async function loadTabs() {
-    const tabs = await browser.tabs.query({});
-    tabCount = tabs.length;
+  async function syncTabCount() {
+    try {
+      const tabs = await browser.tabs.query({});
+      // Filter out hidden Firefox tabs
+      const visibleTabs = tabs.filter(tab => !tab.hidden);
+      tabCount = visibleTabs.length;
+    } catch (err) {
+      console.error('Failed to load tabs:', err);
+    }
   }
 
-  // Load tabs on mount
+  // Load tabs and set up listeners on mount
   $effect(() => {
-    loadTabs();
+    syncTabCount();
+
+    // Listen for tab events
+    const onCreated = (tab: browser.tabs.Tab) => {
+      if (!tab.hidden) {
+        tabCount++;
+      }
+    };
+
+    const onRemoved = () => {
+      // Decrement immediately, don't wait for query
+      tabCount--;
+    };
+
+    browser.tabs.onCreated.addListener(onCreated);
+    browser.tabs.onRemoved.addListener(onRemoved);
+
+    // Cleanup listeners on unmount
+    return () => {
+      browser.tabs.onCreated.removeListener(onCreated);
+      browser.tabs.onRemoved.removeListener(onRemoved);
+    };
   });
 </script>
 
