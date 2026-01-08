@@ -45,7 +45,17 @@ Since Firefox runs on Windows while dev server is in WSL:
 2. Click "Load Temporary Add-on"
 3. Browse to: `\\wsl$\Ubuntu\home\fedora\code\_newborns\tabs-map\.output\firefox-mv2-dev`
 4. Select `manifest.json`
-5. After code changes, click "Reload" in about:debugging
+
+### After Code Changes
+- Go to `about:debugging#/runtime/this-firefox`
+- Find "Tabs Map" in the extensions list
+- Click **"Reload"** button
+
+### To View Console/Debug
+- Go to `about:debugging#/runtime/this-firefox`
+- Find "Tabs Map" in the extensions list
+- Click **"Inspect"** button next to it
+- Console tab shows sidebar logs and errors
 
 ## Architecture
 
