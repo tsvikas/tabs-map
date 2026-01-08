@@ -145,3 +145,8 @@ dist
 
 # WXT internals
 .wxt/
+.output/
+
+# Test artifacts
+test-results/
+playwright-report/
